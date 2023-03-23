@@ -1,0 +1,237 @@
+# This is a project I developed using pysimplegui, and the Interactive Weather API
+#To get started you will need to create an account at https://www.weatherapi.com/
+#Then obtain a API key that you will copy and paste into the key query so that the data can be retrieved from the API
+#Their is a demonstration of this project working on my youtube -- > https://youtu.be/BadpSWCEkoc
+
+import PySimpleGUI as sg
+from win32api import GetSystemMetrics
+import time
+from PIL import Image
+import pyperclip
+import json
+import requests
+import geonamescache
+from datetime import datetime
+
+#this library is used to validate the city entry
+#and check/validate the date
+gc = geonamescache.GeonamesCache()
+current_datetime = datetime.now()
+today = current_datetime.day
+month = current_datetime.month
+year = current_datetime.year
+
+#ONLY needed if your photo needs resized
+#image = Image.open("PATH TO FILE")
+#new_image = image.resize((500, 500))
+#new_image.save("myimage_500.png")
+
+#free api calls only go up to 3 days--"key = " YOUR API KEY
+def Weather(city,days):
+    #city = input("Please enter a city name: ")
+    response  =  requests.get('https://api.weatherapi.com/v1/forecast.json?key="YOUR API KEY"&q={0}&days={1}&aqi=no&alerts=no'.format(city,days))
+    info_json = response.json()
+    print("\n")
+    print(response.status_code)
+    print("This data is from {0}\n".format(response.headers['Date']))
+
+#wb = binary mode allows you to pass bytes to file that you could'nt do otherwise in w mode
+    with open('test.txt', 'wb') as file:
+        for data in response.iter_content(chunk_size=128):
+            file.write(data)
+
+    #fetch the weather for a single day// if days == 1
+    if days == 1:    
+        info = json.dumps(info_json['location']['name'])
+        weather = json.dumps(info_json['current']['temp_f'])
+        loaclTime = json.dumps(info_json['location']['localtime'])
+        dayHigh = json.dumps(info_json['forecast']['forecastday'][0]['day']['maxtemp_f'])
+        dayLow = json.dumps(info_json['forecast']['forecastday'][0]['day']['mintemp_f'])
+        rain = json.dumps(info_json['forecast']['forecastday'][0]['day']['daily_chance_of_rain'])
+        humidity = json.dumps(info_json['forecast']['forecastday'][0]['day']['avghumidity'])
+        
+        print(info)
+        print("fetch for day = 1 is successful")
+        return [weather,loaclTime,dayHigh,dayLow,rain,humidity]
+        
+    #fetch the weather for 3 days// if days == 3
+    #free api calls up to 3 days
+    #can uncomment other days if you want up to 7 days
+    elif days == 3:
+        #fetch the weather for 7 days from today
+        info = json.dumps(info_json['location']['name'])
+
+        weather1 = json.dumps(info_json['forecast']['forecastday'][0]['day']['avgtemp_f'])
+        weather2 = json.dumps(info_json['forecast']['forecastday'][1]['day']['avgtemp_f'])
+        weather3 = json.dumps(info_json['forecast']['forecastday'][2]['day']['avgtemp_f'])
+        #weather4 = json.dumps(info_json['forecast']['forecastday'][3]['day']['avgtemp_f'])
+        #weather5 = json.dumps(info_json['forecast']['forecastday'][4]['day']['avgtemp_f'])
+        #weather6 = json.dumps(info_json['forecast']['forecastday'][5]['day']['avgtemp_f'])
+        #weather7 = json.dumps(info_json['forecast']['forecastday'][6]['day']['avgtemp_f'])
+        
+        dayHigh1 = json.dumps(info_json['forecast']['forecastday'][0]['day']['maxtemp_f'])
+        dayHigh2 = json.dumps(info_json['forecast']['forecastday'][1]['day']['maxtemp_f'])
+        dayHigh3 = json.dumps(info_json['forecast']['forecastday'][2]['day']['maxtemp_f'])
+        #dayHigh4 = json.dumps(info_json['forecast']['forecastday'][3]['day']['maxtemp_f'])
+        #dayHigh5 = json.dumps(info_json['forecast']['forecastday'][4]['day']['maxtemp_f'])
+        #dayHigh6 = json.dumps(info_json['forecast']['forecastday'][5]['day']['maxtemp_f'])
+        #dayHigh7 = json.dumps(info_json['forecast']['forecastday'][6]['day']['maxtemp_f'])
+
+        dayLow1 = json.dumps(info_json['forecast']['forecastday'][0]['day']['mintemp_f'])
+        dayLow2 = json.dumps(info_json['forecast']['forecastday'][1]['day']['mintemp_f'])
+        dayLow3 = json.dumps(info_json['forecast']['forecastday'][2]['day']['mintemp_f'])
+        #dayLow4 = json.dumps(info_json['forecast']['forecastday'][3]['day']['mintemp_f'])
+        #dayLow5 = json.dumps(info_json['forecast']['forecastday'][4]['day']['mintemp_f'])
+        #dayLow6 = json.dumps(info_json['forecast']['forecastday'][5]['day']['mintemp_f'])
+        #dayLow7 = json.dumps(info_json['forecast']['forecastday'][6]['day']['mintemp_f'])
+
+        rain1 = json.dumps(info_json['forecast']['forecastday'][0]['day']['daily_chance_of_rain'])
+        rain2 = json.dumps(info_json['forecast']['forecastday'][1]['day']['daily_chance_of_rain'])
+        rain3 = json.dumps(info_json['forecast']['forecastday'][2]['day']['daily_chance_of_rain'])
+        #rain4 = json.dumps(info_json['forecast']['forecastday'][3]['day']['daily_chance_of_rain'])
+        #rain5 = json.dumps(info_json['forecast']['forecastday'][4]['day']['daily_chance_of_rain'])
+        #rain6 = json.dumps(info_json['forecast']['forecastday'][5]['day']['daily_chance_of_rain'])
+        #rain7 = json.dumps(info_json['forecast']['forecastday'][6]['day']['daily_chance_of_rain'])
+
+        humidity1 = json.dumps(info_json['forecast']['forecastday'][0]['day']['avghumidity'])
+        humidity2 = json.dumps(info_json['forecast']['forecastday'][1]['day']['avghumidity'])
+        humidity3 = json.dumps(info_json['forecast']['forecastday'][2]['day']['avghumidity'])
+        #humidity4 = json.dumps(info_json['forecast']['forecastday'][3]['day']['avghumidity'])
+        #humidity5 = json.dumps(info_json['forecast']['forecastday'][4]['day']['avghumidity'])
+        #humidity6 = json.dumps(info_json['forecast']['forecastday'][5]['day']['avghumidity'])
+        #humidity7 = json.dumps(info_json['forecast']['forecastday'][6]['day']['avghumidity'])
+
+
+        print(info)
+        return [weather1,weather2,weather3,
+                dayHigh1, dayHigh2, dayHigh3,
+                dayLow1, dayLow2, dayLow3,
+                rain1, rain2, rain3,
+                humidity1, humidity2, humidity3
+                ]
+    else:
+        print("There is an issue! 1 or 3 was not passed for days parameter")
+        return 
+    
+#helps eliminates lines and display info easier for weekly forecast
+def MultipleWeathers(Day, AvgTemp, High, Low, Rain, Humidity):
+    Opening = "The weather for this week:\n"
+    AvgTemp = "Day {0}: The Average Temperature is {1} degrees farenheight\n".format(Day, AvgTemp)
+    HighTemp = "The high for the day is {0} degrees farenheight\n".format(High)
+    LowTemp = "The low for the day is {0} degrees farenheight\n".format(Low)
+    Raining = "The chance of rain is {0}%".format(Rain)
+    Humid = "And the humidity is at {0}".format(Humidity)
+    return Opening + AvgTemp + HighTemp + LowTemp + Raining + Humid
+
+#changes the colors of the icons and background of window
+sg.theme("GreenTan")
+
+MENU = [
+    ["File",["New File (No functionality)", "Open (For Decor)", "Save"]],
+    ["Edit",["Copy"]],
+    ["Help", ["About"]]
+]
+
+#for an additionaly menu button
+#menu_button = ["Menu", ["File", "Edit", "View", "Settings", ["Audio", "Keyboard", "Graphics"]]]
+
+col_1 = [
+    #[sg.ButtonMenu("Menu", menu_def = menu_button)],
+    [sg.T("What is your name:")],
+    [sg.I(key="-NAME-")],
+    [sg.T("What city would you like to see the weather for:")],
+    [sg.I(key="-CITY-")]
+]
+col_2 = [
+    [sg.CB("Today's Forecast", key="-TF-")],
+    [sg.CB("Weekly Forecast", key="-WF-")],
+    ]
+col_3 = [
+    [sg.B("Okay, give me the forecast", key="-FORECAST-")],
+    [sg.Cancel(button_color='red')]
+]
+
+#the structure of icons displayed on the window
+layout = [
+    [sg.Menu(MENU)],
+    [],
+    [sg.Frame("Welcome!",col_1)],
+    [sg.Frame("Select one:", col_2)],
+    [sg.VerticalSeparator()],
+    [sg.Col(col_3)],
+    [sg.I(),sg.FileBrowse()],
+    [sg.Image(key="-IMG-")],
+    #[sg.ProgressBar(max_value=100, orientation='h',size=(30,15),key="-PROG-")]
+    [sg.VerticalSeparator()],
+    [sg.T("", key="-DISWEA-")]
+]
+
+#if you wanna adjust the size that can be donw by uncommitting the size parameter 
+window = sg.Window("Weather App", layout) #size=(GetSystemMetrics(0) - 600, GetSystemMetrics(1) - 400))
+
+#loop ensures window is not static
+DISPLAY = True
+while DISPLAY:
+    #gathers inputs from window
+    event, values = window.read()
+    
+    if event in ("Cancel", sg.WIN_CLOSED):
+        DISPLAY = False
+        window.close()
+
+    #if users clicks "Okay, Give me the forecast" button
+    elif event == "-FORECAST-":
+        if values["-NAME-"] == "" or values["-CITY-"] == "":
+            sg.popup_notify("You need to fill in the your name and provide a city name before continuing.",title="ROAD BLOCK", display_duration_in_ms= 360)
+
+        elif values["-TF-"] == False and values["-WF-"] == False:
+            sg.popup_notify("You need to select Today's forecast or the Weekly forecast before continuing.",title="ROAD BLOCK", display_duration_in_ms= 360)
+
+        elif gc.search_cities(values["-CITY-"],case_sensitive=False) == []: 
+            sg.popup_notify("The city you have entered is not in the database, please try again.",title="ROAD BLOCK", display_duration_in_ms= 360)
+
+        else:
+            if values["-TF-"] == True:
+                days = 1
+            elif values["-WF-"] == True:
+                days = 3   
+            sg.popup_timed("Welcome {0}, to my weather GUI project! \nBy: Gabe Lowden\n".format(values["-NAME-"]), title = "Greetings", auto_close_duration=5)
+            
+            if values["-WF-"] == True:
+                Fetch = Weather(values["-CITY-"], days)
+                Day1 = MultipleWeathers(1, Fetch[0], Fetch[3], Fetch[6], Fetch[9], Fetch[12])
+                Day2 = MultipleWeathers(1, Fetch[1], Fetch[4], Fetch[7], Fetch[10], Fetch[13])
+                Day3 = MultipleWeathers(1, Fetch[2], Fetch[5], Fetch[8], Fetch[11], Fetch[14])
+                #Day4 = MultipleWeathers(1, Fetch[4], Fetch[11], Fetch[18], Fetch[25], Fetch[32])
+                #Day5 = MultipleWeathers(1, Fetch[5], Fetch[12], Fetch[19], Fetch[26], Fetch[33])
+                #Day6 = MultipleWeathers(1, Fetch[6], Fetch[13], Fetch[20], Fetch[27], Fetch[34])
+                #Day7 = MultipleWeathers(1, Fetch[7], Fetch[14], Fetch[21], Fetch[28], Fetch[35])
+
+                window["-DISWEA-"].update(Day1 + Day2 + Day3)
+
+            elif values["-TF-"] == True:
+                Fetch = Weather(values["-CITY-"],days)
+                window["-DISWEA-"].Update("The weather in {0} is {1} degrees currently, and the local time is ".format(values["-CITY-"],Fetch[0]) + Fetch[1] + ".")
+
+            else:
+                pass
+
+    elif event == "Save":
+        sg.popup(title="Saved", custom_text="Your weather has been saved")
+
+    elif event == "About":
+        sg.popup(title="About Me",
+                  #image=r"C:\Users\Gabe\Desktop\lowdengj@mail.uc.edu-2.png", 
+                  custom_text="My name is Gabe, and I am a full-time student at University of Cincinatti studying Cybersecurity Engineering"
+                  )
+    elif event == "Copy":
+        pyperclip.copy("This is an easter egg")
+
+
+    if event == sg.WIN_CLOSED:
+        window.close()
+
+#end loops so window closes
+DISPLAY = False
+print(event, values)
+window.close()
