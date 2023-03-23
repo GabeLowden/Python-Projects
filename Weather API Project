@@ -2,6 +2,7 @@
 #To get started you will need to create an account at https://www.weatherapi.com/
 #Then obtain a API key that you will copy and paste into the key query so that the data can be retrieved from the API
 #Their is a demonstration of this project working on my youtube -- > https://youtu.be/BadpSWCEkoc
+#to discover what a response from the API looks like visit --> https://www.weatherapi.com/api-explorer.aspx#forecast
 
 import PySimpleGUI as sg
 from win32api import GetSystemMetrics
