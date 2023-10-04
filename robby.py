@@ -1,4 +1,3 @@
-# CS2023 - Lab07
 # Using OOP to design a "simple" adventure game
 
 class Player(object):
